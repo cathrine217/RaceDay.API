@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(); // <--- THIS LINE IS MISSING - ADD IT HERE
 builder.Services.AddScoped<TokenService>();
 
 // Add DbContext
@@ -46,7 +47,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication(); // Must be BEFORE UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
