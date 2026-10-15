@@ -65,10 +65,5 @@ cd RaceDay.API
 2. Click Run All Tests.
 3. All tests should pass with green checkmarks.
 
-## CI/CD Green Build
-
-The GitHub Actions workflow automatically builds the project and runs all unit tests on every push.
-
-![Green Build](screenshots/green-build.png)
 
 
