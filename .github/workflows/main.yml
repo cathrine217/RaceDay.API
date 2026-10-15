@@ -1,4 +1,3 @@
-
 name: .NET CI
 
 on:
@@ -20,13 +19,13 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Restore dependencies for API
-      run: dotnet restore RaceDay.API/RaceDay.API.csproj
+      run: dotnet restore RaceDay.API.csproj
 
     - name: Build API
-      run: dotnet build RaceDay.API/RaceDay.API.csproj --no-restore --configuration Release
+      run: dotnet build RaceDay.API.csproj --no-restore --configuration Release
 
     - name: Restore dependencies for Tests
-      run: dotnet restore RaceDay.Tests/RaceDay.Tests.csproj
+      run: dotnet restore RaceDay.Tests.csproj
 
     - name: Run Tests
-      run: dotnet test RaceDay.Tests/RaceDay.Tests.csproj --configuration Release --verbosity normal
+      run: dotnet test RaceDay.Tests.csproj --configuration Release --verbosity normal
