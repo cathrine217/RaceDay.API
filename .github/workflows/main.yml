@@ -25,7 +25,7 @@ jobs:
       run: dotnet build RaceDay.API-CATHRINE.csproj --no-restore --configuration Release
 
     - name: Restore dependencies for Tests
-      run: dotnet restore RaceDay-API.Test.csproj
+      run: dotnet restore RaceDay.Tests/RaceDay.Tests.csproj
 
     - name: Run Tests
-      run: dotnet test RaceDay-API.Test.csproj --configuration Release --verbosity normal
+      run: dotnet test RaceDay.Tests/RaceDay.Tests.csproj --configuration Release --verbosity normal
