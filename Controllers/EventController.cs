@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using RaceDay.API.Data;
 using RaceDay.API.Models;
 using System.Security.Claims;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 namespace RaceDay.API.Controllers
 {
@@ -12,7 +14,13 @@ namespace RaceDay.API.Controllers
     public class EventsController : ControllerBase
     {
         private readonly RaceDayContext _context;
-        public EventsController(RaceDayContext context) { _context = context; }
+        private readonly IConfiguration _configuration; // Added for Azure
+
+        public EventsController(RaceDayContext context, IConfiguration configuration)
+        {
+            _context = context;
+            _configuration = configuration;
+        }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Event>>> GetEvents()
@@ -84,6 +92,31 @@ namespace RaceDay.API.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // THIS IS NOW CORRECTLY PLACED AT THE CLASS LEVEL
+        [HttpPost("{id}/upload-image")]
+        [Authorize(Roles = "Organiser")]
+        public async Task<IActionResult> UploadImage(int id, IFormFile file)
+        {
+            var ev = await _context.Events.FindAsync(id);
+            if (ev == null || file == null) return BadRequest("Event not found or no file provided");
+
+            var connectionString = _configuration["AzureBlobStorage"];
+            if (string.IsNullOrEmpty(connectionString)) return StatusCode(500, "Azure connection string missing");
+
+            var blobServiceClient = new BlobServiceClient(connectionString);
+            var containerClient = blobServiceClient.GetBlobContainerClient("eventimages");
+            await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+
+            var blobClient = containerClient.GetBlobClient(Guid.NewGuid().ToString() + Path.GetExtension(file.FileName));
+            using var stream = file.OpenReadStream();
+            await blobClient.UploadAsync(stream, true);
+
+            ev.ImageUrl = blobClient.Uri.ToString();
+            await _context.SaveChangesAsync();
+
+            return Ok(new { url = ev.ImageUrl });
         }
     }
 }

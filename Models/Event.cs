@@ -36,6 +36,8 @@ namespace RaceDay.API.Models
 
         public string? Status { get; set; } // "Open", "Closed", "Cancelled"
 
+        public string? ImageUrl { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Category> Categories { get; set; } = new List<Category>();
